@@ -4,6 +4,7 @@ use ndarray::Array1;
 use ndarray::Array2;
 
 use super::activate::sigmoid_f;
+use super::activate::softmax_f;
 
 type Wb = (HashMap<String, Array1<f64>>, HashMap<String, Array2<f64>>);
 
@@ -28,10 +29,20 @@ pub fn init_net() -> Wb {
 
 #[allow(dead_code)]
 pub fn forward(net: Wb, x: Array1<f64>) -> Array1<f64> {
-    let a1 = x.dot(net.1.get(&"w1".to_string()).unwrap()) + net.0.get(&"b1".to_string()).unwrap();
+    let a1 = x.dot(&net.1["w1"]) + &net.0["b1"];
     let z1 = sigmoid_f(&a1);
-    let a2 = z1.dot(net.1.get(&"w2".to_string()).unwrap()) + net.0.get(&"b2".to_string()).unwrap();
+    let a2 = z1.dot(&net.1["w2"]) + &net.0["b2"];
     let z2 = sigmoid_f(&a2);
-    let z3 = z2.dot(net.1.get(&"w3".to_string()).unwrap()) + net.0.get(&"b3".to_string()).unwrap();
-    z3
+    z2.dot(&net.1["w3"]) + &net.0["b3"]
+    //softmax_f(&a3)
+}
+
+#[allow(dead_code)]
+pub fn predict(net: Wb, x: Array1<f64>) -> Array1<f64> {
+    let a1 = x.dot(&net.1["w1"]) + &net.0["b1"];
+    let z1 = sigmoid_f(&a1);
+    let a2 = z1.dot(&net.1["w2"]) + &net.0["b2"];
+    let z2 = sigmoid_f(&a2);
+    let a3 = z2.dot(&net.1["w3"]) + &net.0["b3"];
+    softmax_f(&a3)
 }
